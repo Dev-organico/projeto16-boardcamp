@@ -8,6 +8,3 @@ export const gameSchema = joi.object({
 
 });
 
- /*  name: joi.string().required().min(1),
-  description: joi.string().required(),
-  type: joi.string().valid("positive", "negative").required() */

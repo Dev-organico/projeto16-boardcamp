@@ -1,7 +1,9 @@
 import joi from "joi";
 
 export const customersSchema = joi.object({
-  value: joi.number().required(),
-  description: joi.string().required(),
-  type: joi.string().valid("positive", "negative").required()
+  
+    name: joi.string().required().min(1) ,
+    phone: joi.number().required().min(10).max(11),
+    cpf: joi.number().required().min(11).max(11),
+    birthday: joi.date().required()
 });
