@@ -18,7 +18,7 @@ export async function getCustomer(req,res){
     try {
         const exist = await db.query(`SELECT * FROM customers WHERE id = $1` , [id])
 
-        if(exist.rows.length > 0) return res.sendStatus(404)
+        if(exist.rows.length === 0) return res.sendStatus(404)
 
         res.send(customer.rows[0])
 
@@ -68,7 +68,7 @@ export async function updateCustomer(req,res){
 
         const exist = await db.query(`SELECT * FROM customers WHERE cpf = $1 `,[cpf])
 
-        if(exist.rows.length === 0) return res.sendStatus(409)
+        if(exist.rows.length > 0) return res.sendStatus(409)
 
         const updatedCustomer = await db.query(`UPDATE customers SET name = $1 ,phone = $2 ,birthday = $3 WHERE id = $4;`,[name,phone,birthday,id])
 
