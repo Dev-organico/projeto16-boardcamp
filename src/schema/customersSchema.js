@@ -3,7 +3,7 @@ import joi from "joi";
 export const customersSchema = joi.object({
   
     name: joi.string().required().min(1) ,
-    phone: joi.number().required().min(10).max(11),
-    cpf: joi.number().required().min(11).max(11),
-    birthday: joi.date().required()
+    phone: joi.string().required().min(11).max(12).regex(/^\d+$/),
+    cpf: joi.string().length(11).regex(/^\d+$/),
+    birthday: joi.date().required(),
 });
