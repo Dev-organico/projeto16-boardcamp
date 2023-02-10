@@ -8,6 +8,6 @@ const customerRouter = Router()
 customerRouter.get("/customers",listCustomers)
 customerRouter.get("/customers/:id",getCustomer)
 customerRouter.post("/customers",validateSchema(customersSchema),insertCustomer)
-customerRouter.put("/customers",updateCustomer)
+customerRouter.put("/customers/:id",validateSchema(customersSchema),updateCustomer)
 
 export default customerRouter;
