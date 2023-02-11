@@ -74,7 +74,7 @@ export async function updateCustomer(req, res) {
             }
         }
 
-        const updatedCustomer = await db.query(`UPDATE customers SET name = $1 ,phone = $2 ,birthday = $3 WHERE id = $4;`, [name, phone, birthday, id])
+        const updatedCustomer = await db.query(`UPDATE customers SET name = $1 ,phone = $2 , cpf = $3, birthday = $4 WHERE id = $5;`, [name, phone,cpf, birthday, id])
 
         console.log(updateCustomer)
 
