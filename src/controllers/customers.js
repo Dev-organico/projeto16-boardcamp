@@ -69,7 +69,7 @@ export async function updateCustomer(req, res) {
         const exist = await db.query(`SELECT * FROM customers WHERE cpf = $1 `, [cpf])
 
         if (exist.rows.length > 0) {
-            if (exist.rows[0].id !== id) {
+            if (exist.rows[0].id !== Number(id)) {
                 return res.sendStatus(409)
             }
         }
