@@ -1,8 +1,8 @@
-import {db} from "../config/database.js"
+import { db } from "../config/database.js"
 
 
 
-export async function listCustomers(req,res){
+export async function listCustomers(req, res) {
     try {
         const customers = await db.query(`SELECT * FROM customers`)
 
@@ -13,12 +13,12 @@ export async function listCustomers(req,res){
     }
 }
 
-export async function getCustomer(req,res){
-    const { id } =  req.params
+export async function getCustomer(req, res) {
+    const { id } = req.params
     try {
-        const exist = await db.query(`SELECT * FROM customers WHERE id = $1` , [id])
+        const customer = await db.query(`SELECT * FROM customers WHERE id = $1`, [id])
 
-        if(exist.rows.length === 0) return res.sendStatus(404)
+        if (customer.rows.length === 0) return res.sendStatus(404)
 
         res.send(customer.rows[0])
 
@@ -29,7 +29,7 @@ export async function getCustomer(req,res){
 }
 
 
-export async function insertCustomer(req,res){
+export async function insertCustomer(req, res) {
     const {
         name,
         phone,
@@ -38,11 +38,11 @@ export async function insertCustomer(req,res){
 
     try {
 
-        const exist = await db.query(`SELECT * FROM customers WHERE cpf = $1`,[cpf])
+        const exist = await db.query(`SELECT * FROM customers WHERE cpf = $1`, [cpf])
 
-        if(exist.rows.length > 0) return res.sendStatus(409)
+        if (exist.rows.length > 0) return res.sendStatus(409)
 
-        const singleCustomer = await db.query(`INSERT INTO customers (name,phone,cpf,birthday) VALUES ($1,$2,$3,$4);`,[name,phone,cpf,birthday])
+        const singleCustomer = await db.query(`INSERT INTO customers (name,phone,cpf,birthday) VALUES ($1,$2,$3,$4);`, [name, phone, cpf, birthday])
 
         console.log(singleCustomer)
 
@@ -55,22 +55,26 @@ export async function insertCustomer(req,res){
 }
 
 
-export async function updateCustomer(req,res){
+export async function updateCustomer(req, res) {
     const {
         name,
         phone,
         cpf,
         birthday } = req.body
 
-    const {id} = req.params
+    const { id } = req.params
 
     try {
 
-        const exist = await db.query(`SELECT * FROM customers WHERE cpf = $1 `,[cpf])
+        const exist = await db.query(`SELECT * FROM customers WHERE cpf = $1 `, [cpf])
 
-        if(exist.rows.length > 0) return res.sendStatus(409)
+        if (exist.rows.length > 0) {
+            if (exist.rows[0].id !== id) {
+                return res.sendStatus(409)
+            }
+        }
 
-        const updatedCustomer = await db.query(`UPDATE customers SET name = $1 ,phone = $2 ,birthday = $3 WHERE id = $4;`,[name,phone,birthday,id])
+        const updatedCustomer = await db.query(`UPDATE customers SET name = $1 ,phone = $2 ,birthday = $3 WHERE id = $4;`, [name, phone, birthday, id])
 
         console.log(updateCustomer)
 
