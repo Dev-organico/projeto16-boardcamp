@@ -39,22 +39,19 @@ export async function insertRent(req, res) {
 
         const numberGames = await db.query(`SELECT * FROM rentals WHERE "gameId" = $1 `, [gameId])
 
-        const stockTotal = await db.query(`SELECT games."stockTotal" FROM games WHERE id = $1` , [gameId])
+        const stockTotal = gameExists.rows[0].stockTotal
 
-        const pricePerDay = await db.query(`SELECT games."pricePerDay" FROM games WHERE id = $1` , [gameId])
+        const pricePerDay = gameExists.rows[0].pricePerDay
 
-        const originalPrice = pricePerDay.rows[0]*daysRented
+        const originalPrice = pricePerDay*daysRented
 
-        if(numberGames.rows[0] > stockTotal.rows[0]) return res.sendStatus(400)
+        if(numberGames.rows.length === stockTotal) return res.sendStatus(400)
 
         const newRent = await db.query(`
         INSERT INTO rentals ("customerId","gameId","rentDate","daysRented","returnDate","originalPrice","delayFee")
         VALUES ($1,$2,$3,$4,$5,$6,$7)`,[customerId,gameId,today,daysRented,null,originalPrice,null])
 
-        console.log(newRent)
-
-
-
+        res.sendStatus(201)
 
     } catch (error) {
         res.status(500).send(error.message)
