@@ -67,7 +67,7 @@ export async function finishRent(req, res) {
     const today = dayjs()
 
     try {
-        const rent = await db.query(`SELECT * rentals WHERE id = $1`, [id])
+        const rent = await db.query(`SELECT * FROM rentals WHERE id = $1`, [id])
 
         if (rent.rows.length === 0) return res.sendStatus(404)
 
@@ -81,7 +81,7 @@ export async function finishRent(req, res) {
 
         if(overDays > 0) delayFee = overDays * (rent.rows[0].originalPrice/rent.rows[0].daysRented)
 
-        await db.query(`UPDATE rentals SET ("returnDate","delayFee") VALUE ($1,$2) WHERE id = $3`,[today,delayFee,id])
+        await db.query(`UPDATE rentals SET "returnDate" = $1 , "delayFee"=$2  WHERE id = $3`,[today,delayFee,id])
 
         res.sendStatus(200)
 
