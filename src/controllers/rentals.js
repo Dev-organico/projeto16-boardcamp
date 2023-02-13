@@ -5,10 +5,11 @@ import dayjs from "dayjs"
 export async function listRentals(req, res) {
     try {
         const rentals = await db.query(`
-        SELECT *
-        FROM rentals
+        SELECT
+        rentals.*,
         JSON_BUILD_OBJECT('id',customers.id,'name',customers.name) AS customer,
-        JSON_BUILD_OBJECT('id',games.id,'name',games.name) AS game,
+        JSON_BUILD_OBJECT('id',games.id,'name',games.name) AS game
+        FROM rentals
         JOIN customers
             ON rentals."customerId" = customers.id
         JOIN games
