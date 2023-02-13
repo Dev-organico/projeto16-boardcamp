@@ -61,9 +61,30 @@ export async function insertRent(req, res) {
 
 
 export async function finishRent(req, res) {
+
     const {id} = req.params
+
+    const today = dayjs()
+
     try {
+        const rent = await db.query(`SELECT * rentals WHERE id = $1`, [id])
+
+        if (rent.rows.length === 0) return res.sendStatus(404)
+
+        if(rent.rows[0].returnDate !== null) return res.sendStatus(400)
+
+        const expireDate = dayjs(rent.rows[0].rentDate).add(rent.rows[0].daysRented,'day')
+
+        let delayFee = 0
+
+        const overDays = dayjs().diff(expireDate,'day')
+
+        if(overDays > 0) delayFee = overDays * (rent.rows[0].originalPrice/rent.rows[0].daysRented)
+
+        await db.query(`UPDATE rentals SET ("returnDate","delayFee") VALUE ($1,$2) WHERE id = $3`,[today,delayFee,id])
+
         res.sendStatus(200)
+
     } catch (error) {
         res.status(500).send(error.message)
     }
@@ -71,18 +92,15 @@ export async function finishRent(req, res) {
 
 
 export async function deleteRent(req, res) {
-
+    
     const {id} = req.params
-
     try {
 
-        let rent = await db.query(`SELECT * FROM rentals WHERE id = $1`, [id])
+        const rent = await db.query(`SELECT * FROM rentals WHERE id = $1`, [id])
 
-        rent = rent.rows[0]
+        if (rent.rows.length === 0) return res.sendStatus(404)
 
-        if (!rent) return res.sendStatus(404)
-
-        if(!rent.returnDate) return res.sendStatus(400)
+        if(rent.rows[0].returnDate === null) return res.sendStatus(400)
 
         await db.query(`DELETE FROM rentals WHERE id = $1`, [id])
 
