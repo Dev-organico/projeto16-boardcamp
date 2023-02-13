@@ -61,10 +61,32 @@ export async function insertRent(req, res) {
 
 
 export async function finishRent(req, res) {
-    return ('oi')
+    const {id} = req.params
+    try {
+        res.sendStatus(200)
+    } catch (error) {
+        res.status(500).send(error.message)
+    }
 }
 
 
 export async function deleteRent(req, res) {
-    return ('oi')
+
+    const {id} = req.params
+
+    try {
+
+        const rent = await db.query(`SELECT * FROM rentals WHERE id = $1`, [id])
+
+        if (rent.rows.length === 0) return res.sendStatus(404)
+
+        if(rent.rows[0].returnDate === null) return res.sendStatus(400)
+
+        await db.query(`DELETE FROM rentals WHERE id = $1`, [id])
+
+        res.sendStatus(200)
+
+    } catch (error) {
+        res.status(500).send(error.message)
+    }
 }
